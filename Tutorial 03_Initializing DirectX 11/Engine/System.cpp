@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: systemclass.cpp
+// Filename: system.cpp
 ////////////////////////////////////////////////////////////////////////////////
-#include "SystemClass.h"
+#include "System.h"
 
-SystemClass::SystemClass()
+System::System()
 {
 	// Initialize the width and height of the screen to zero before sending the variables into the function.
 	uint screenWidth = 0;
@@ -12,16 +12,16 @@ SystemClass::SystemClass()
 	InitializeWindows(screenWidth, screenHeight);
 
 	// Create and initialize the application class object.  This object will handle rendering all the graphics for this application.
-	_application.reset(new ApplicationClass(screenWidth, screenHeight, _hwnd));
+	_application.reset(new Application(screenWidth, screenHeight, _hwnd));
 }
 
-SystemClass::~SystemClass()
+System::~System()
 {
 	// Shutdown the window.
 	ShutdownWindows();
 }
 
-void SystemClass::Run()
+void System::Run()
 {
 	MSG msg;
 	bool done, result;
@@ -57,7 +57,7 @@ void SystemClass::Run()
 	}
 }
 
-bool SystemClass::Frame()
+bool System::Frame()
 {
 	// Check if the user pressed escape and wants to exit the application.
 	if (_input.IsKeyDown(VK_ESCAPE))
@@ -69,7 +69,7 @@ bool SystemClass::Frame()
 	return _application->Frame();
 }
 
-LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
+LRESULT CALLBACK System::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
 {
 	switch (umsg)
 	{
@@ -97,7 +97,7 @@ LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam
 	}
 }
 
-void SystemClass::InitializeWindows(uint& screenWidth, uint& screenHeight)
+void System::InitializeWindows(uint& screenWidth, uint& screenHeight)
 {
 	WNDCLASSEX wc;
 	DEVMODE dmScreenSettings;
@@ -177,7 +177,7 @@ void SystemClass::InitializeWindows(uint& screenWidth, uint& screenHeight)
 	return;
 }
 
-void SystemClass::ShutdownWindows()
+void System::ShutdownWindows()
 {
 	// Show the mouse cursor.
 	ShowCursor(true);

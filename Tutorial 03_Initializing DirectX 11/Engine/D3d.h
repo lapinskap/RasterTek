@@ -67,12 +67,12 @@ private:
 	T* _ptr = nullptr;
 };
 
-class D3DClass
+class D3D
 {
 public:
 
-	D3DClass(uint screenWidth, uint screenHeight, bool vsync, HWND hwnd, bool fullscreen, float screenDepth, float screenNear);
-    ~D3DClass();
+	D3D(uint screenWidth, uint screenHeight, bool vsync, HWND hwnd, bool fullscreen, float screenDepth, float screenNear);
+    ~D3D();
 
     void BeginScene(float red, float green, float blue, float alpha);
     void EndScene();

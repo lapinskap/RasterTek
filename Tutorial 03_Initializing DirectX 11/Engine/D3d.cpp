@@ -1,6 +1,6 @@
-#include "D3dClass.h"
+#include "D3d.h"
 
-D3DClass::D3DClass(uint screenWidth, uint screenHeight, bool vsync, HWND hwnd, bool fullscreen, float screenDepth, float screenNear)
+D3D::D3D(uint screenWidth, uint screenHeight, bool vsync, HWND hwnd, bool fullscreen, float screenDepth, float screenNear)
 {
 	// Store the vsync setting.
 	_vsyncEnabled = vsync;
@@ -76,7 +76,7 @@ D3DClass::D3DClass(uint screenWidth, uint screenHeight, bool vsync, HWND hwnd, b
 	Init2(hwnd, numerator, denominator, fullscreen, screenWidth, screenHeight, screenDepth, screenNear);
 }
 
-bool D3DClass::Init2(HWND hwnd, uint numerator, uint denominator, bool fullscreen, uint screenWidth, uint screenHeight, float screenDepth, float screenNear)
+bool D3D::Init2(HWND hwnd, uint numerator, uint denominator, bool fullscreen, uint screenWidth, uint screenHeight, float screenDepth, float screenNear)
 {
 	// Set the refresh rate of the back buffer.
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
@@ -286,7 +286,7 @@ bool D3DClass::Init2(HWND hwnd, uint numerator, uint denominator, bool fullscree
 	return true;
 }
 
-D3DClass::~D3DClass()
+D3D::~D3D()
 {
 	// Before shutting down set to windowed mode or when you release the swap chain it will throw an exception.
 	if (_swapChain)
@@ -295,7 +295,7 @@ D3DClass::~D3DClass()
 	}
 }
 
-void D3DClass::BeginScene(float red, float green, float blue, float alpha)
+void D3D::BeginScene(float red, float green, float blue, float alpha)
 {
 	// Setup the color to clear the buffer to.
 	float color[4] = {red, green, blue, alpha};
@@ -308,7 +308,7 @@ void D3DClass::BeginScene(float red, float green, float blue, float alpha)
 }
 
 
-void D3DClass::EndScene()
+void D3D::EndScene()
 {
 	// Present the back buffer to the screen since rendering is complete.
 	if (_vsyncEnabled)
@@ -323,37 +323,37 @@ void D3DClass::EndScene()
 	}
 }
 
-ID3D11Device* D3DClass::GetDevice()
+ID3D11Device* D3D::GetDevice()
 {
 	return _device.get();
 }
 
-ID3D11DeviceContext* D3DClass::GetDeviceContext()
+ID3D11DeviceContext* D3D::GetDeviceContext()
 {
 	return _deviceContext.get();
 }
 
-void D3DClass::GetProjectionMatrix(DirectX::XMMATRIX& projectionMatrix)
+void D3D::GetProjectionMatrix(DirectX::XMMATRIX& projectionMatrix)
 {
 	projectionMatrix = _projectionMatrix;
 }
 
-void D3DClass::GetWorldMatrix(DirectX::XMMATRIX& worldMatrix)
+void D3D::GetWorldMatrix(DirectX::XMMATRIX& worldMatrix)
 {
 	worldMatrix = _worldMatrix;
 }
 
-void D3DClass::GetOrthoMatrix(DirectX::XMMATRIX& orthoMatrix)
+void D3D::GetOrthoMatrix(DirectX::XMMATRIX& orthoMatrix)
 {
 	orthoMatrix = _orthoMatrix;
 }
 
-const std::string& D3DClass::GetVideoCardInfo() const
+const std::string& D3D::GetVideoCardInfo() const
 {
 	return _videoCardDescription;
 }
 
-void D3DClass::SetBackBufferRenderTarget()
+void D3D::SetBackBufferRenderTarget()
 {
 	// Bind the render target view and depth stencil buffer to the output render pipeline.
 	ID3D11RenderTargetView* renderTargetViewArray[1]{ _renderTargetView.get() };
@@ -361,7 +361,7 @@ void D3DClass::SetBackBufferRenderTarget()
 }
 
 
-void D3DClass::ResetViewport()
+void D3D::ResetViewport()
 {
 	// Set the viewport.
 	_deviceContext->RSSetViewports(1, &_viewport);

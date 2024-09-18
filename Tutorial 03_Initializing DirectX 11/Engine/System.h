@@ -4,15 +4,15 @@
 
 #include <windows.h>
 
-#include "inputclass.h"
-#include "applicationclass.h"
+#include "Input.h"
+#include "Application.h"
 
-class SystemClass
+class System
 {
 public:
 	
-	SystemClass();
-	~SystemClass();
+	System();
+	~System();
 
 	void Run();
 
@@ -28,10 +28,10 @@ private:
 	HINSTANCE _hinstance;
 	HWND _hwnd;
 
-	InputClass _input; // This object will be used to handle reading the keyboard input from the user.
-	std::unique_ptr<ApplicationClass> _application;
+	Input _input; // This object will be used to handle reading the keyboard input from the user.
+	std::unique_ptr<Application> _application;
 };
 
 static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
-static SystemClass* ApplicationHandle = 0;
+static System* ApplicationHandle = 0;
