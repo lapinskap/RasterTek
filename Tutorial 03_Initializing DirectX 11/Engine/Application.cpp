@@ -2,9 +2,8 @@
 
 
 Application::Application(uint screenWidth, uint screenHeight, HWND hwnd)
-	: _direct3D(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR)
+	: _direct3D(D3D::InitParams{ hwnd, screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH, VSYNC_ENABLED, FULL_SCREEN })
 {
-	// TODO: Handle the error if the Direct3D object is not created.
 }
 
 bool Application::Render()
@@ -17,7 +16,6 @@ bool Application::Render()
 	_direct3D.EndScene();
 
 	return true;
-	// ???????
 }
 
 bool Application::Frame()

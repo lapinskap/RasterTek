@@ -3,6 +3,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "System.h"
 
+LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+
+System* ApplicationHandle = nullptr;
+
 System::System()
 {
 	// Initialize the width and height of the screen to zero before sending the variables into the function.
@@ -12,7 +16,7 @@ System::System()
 	InitializeWindows(screenWidth, screenHeight);
 
 	// Create and initialize the application class object.  This object will handle rendering all the graphics for this application.
-	_application.reset(new Application(screenWidth, screenHeight, _hwnd));
+	_application = std::make_unique<Application>(screenWidth, screenHeight, _hwnd);
 }
 
 System::~System()
@@ -99,10 +103,6 @@ LRESULT CALLBACK System::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPA
 
 void System::InitializeWindows(uint& screenWidth, uint& screenHeight)
 {
-	WNDCLASSEX wc;
-	DEVMODE dmScreenSettings;
-	int posX, posY;
-
 	// Get an external pointer to this object.	
 	ApplicationHandle = this;
 
@@ -113,6 +113,7 @@ void System::InitializeWindows(uint& screenWidth, uint& screenHeight)
 	_applicationName = L"Engine";
 
 	// Setup the windows class with default settings.
+	WNDCLASSEX wc;
 	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 	wc.lpfnWndProc = WndProc;
 	wc.cbClsExtra = 0;
@@ -133,10 +134,14 @@ void System::InitializeWindows(uint& screenWidth, uint& screenHeight)
 	screenWidth = (uint)GetSystemMetrics(SM_CXSCREEN);
 	screenHeight = (uint)GetSystemMetrics(SM_CYSCREEN);
 
+	int posX = 0;
+	int posY = 0;
+
 	// Setup the screen settings depending on whether it is running in full screen or in windowed mode.
 	if (FULL_SCREEN)
 	{
 		// If full screen set the screen to maximum size of the users desktop and 32bit.
+		DEVMODE dmScreenSettings;
 		memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
 		dmScreenSettings.dmSize = sizeof(dmScreenSettings);
 		dmScreenSettings.dmPelsWidth = screenWidth;
@@ -146,9 +151,6 @@ void System::InitializeWindows(uint& screenWidth, uint& screenHeight)
 
 		// Change the display settings to full screen.
 		ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN);
-
-		// Set the position of the window to the top left corner.
-		posX = posY = 0;
 	}
 	else
 	{
@@ -173,8 +175,6 @@ void System::InitializeWindows(uint& screenWidth, uint& screenHeight)
 
 	// Hide the mouse cursor.
 	ShowCursor(false);
-
-	return;
 }
 
 void System::ShutdownWindows()
@@ -184,22 +184,20 @@ void System::ShutdownWindows()
 
 	// Fix the display settings if leaving full screen mode.
 	if (FULL_SCREEN)
-	{
 		ChangeDisplaySettings(nullptr, 0);
-	}
 
 	// Remove the window.
-	DestroyWindow(_hwnd);
+	if (_hwnd)
+		DestroyWindow(_hwnd);
 	_hwnd = nullptr;
 
 	// Remove the application instance.
-	UnregisterClass(_applicationName, _hinstance);
+	if (_hinstance)
+		UnregisterClass(_applicationName, _hinstance);
 	_hinstance = nullptr;
 
 	// Release the pointer to this class.
 	ApplicationHandle = nullptr;
-
-	return;
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
@@ -207,23 +205,23 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 	switch (umessage)
 	{
 		// Check if the window is being destroyed.
-	case WM_DESTROY:
-	{
-		PostQuitMessage(0);
-		return 0;
-	}
+		case WM_DESTROY:
+		{
+			PostQuitMessage(0);
+			return 0;
+		}
 
-	// Check if the window is being closed.
-	case WM_CLOSE:
-	{
-		PostQuitMessage(0);
-		return 0;
-	}
+		// Check if the window is being closed.
+		case WM_CLOSE:
+		{
+			PostQuitMessage(0);
+			return 0;
+		}
 
-	// All other messages pass to the message handler in the system class.
-	default:
-	{
-		return ApplicationHandle->MessageHandler(hwnd, umessage, wparam, lparam);
-	}
+		// All other messages pass to the message handler in the system class.
+		default:
+		{
+			return ApplicationHandle->MessageHandler(hwnd, umessage, wparam, lparam);
+		}
 	}
 }

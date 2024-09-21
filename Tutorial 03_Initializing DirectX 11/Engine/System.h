@@ -1,9 +1,9 @@
 #pragma once
 
 #define WIN32_LEAN_AND_MEAN
-
 #include <windows.h>
 
+#include "Common.h"
 #include "Input.h"
 #include "Application.h"
 
@@ -24,14 +24,10 @@ public:
 
 private:
 
-	LPCWSTR _applicationName;
-	HINSTANCE _hinstance;
-	HWND _hwnd;
+	LPCWSTR _applicationName = nullptr;
+	HINSTANCE _hinstance = nullptr;
+	HWND _hwnd = nullptr;
 
 	Input _input; // This object will be used to handle reading the keyboard input from the user.
 	std::unique_ptr<Application> _application;
 };
-
-static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-
-static System* ApplicationHandle = 0;

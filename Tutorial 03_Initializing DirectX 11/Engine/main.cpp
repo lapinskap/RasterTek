@@ -1,13 +1,18 @@
 #include "System.h"
 
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline, int iCmdshow)
 {
-	// Create the system object.
-	System System;
+	try
+	{
+		System System;
 
-	// Run the system object.
-	System.Run();
+		System.Run();
 
-	return 0;
+		return 0;
+	}
+	catch (const std::exception& e)
+	{
+		MessageBoxA(nullptr, e.what(), "Error", MB_OK);
+		return 1;
+	}
 }
