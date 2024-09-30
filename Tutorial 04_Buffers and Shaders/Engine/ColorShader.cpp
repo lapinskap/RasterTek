@@ -316,3 +316,4 @@ void ColorShader::RenderShader(ID3D11DeviceContext* deviceContext, int indexCoun
 
 	return;
 }
+ 
