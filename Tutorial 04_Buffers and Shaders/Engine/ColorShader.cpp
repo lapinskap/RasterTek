@@ -1,23 +1,10 @@
 #include "ColorShader.h"
 #include "Common.h"
+#include <iostream>
 
-ColorShader::ColorShader()
-	: _vertexShader(nullptr)
-	, _pixelShader(nullptr)
-	, _layout(nullptr)
-	, _matrixBuffer(nullptr)
+ColorShader::ColorShader(ID3D11Device* device, HWND hwnd)
 {
 
-}
-
-
-ColorShader::~ColorShader()
-{
-}
-
-bool ColorShader::Initialize(ID3D11Device* device, HWND hwnd)
-{
-	bool result;
 	wchar_t vsFilename[128];
 	wchar_t psFilename[128];
 	int error;
@@ -27,32 +14,18 @@ bool ColorShader::Initialize(ID3D11Device* device, HWND hwnd)
 	error = wcscpy_s(vsFilename, 128, L"../Engine/color.vs");
 	if (error != 0)
 	{
-		return false;
+		MessageBox(hwnd, L"Error copying string", L"Error", MB_OK);
 	}
 
 	// Set the filename of the pixel shader.
 	error = wcscpy_s(psFilename, 128, L"../Engine/color.ps");
 	if (error != 0)
 	{
-		return false;
+		MessageBox(hwnd, L"Error copying string", L"Error", MB_OK);
 	}
 
 	// Initialize the vertex and pixel shaders.
-	result = InitializeShader(device, hwnd, vsFilename, psFilename);
-	if (!result)
-	{
-		return false;
-	}
-
-	return true;
-}
-
-void ColorShader::Shutdown()
-{
-	// Shutdown the vertex and pixel shaders as well as the related objects.
-	ShutdownShader();
-
-	return;
+	InitializeShader(device, hwnd, vsFilename, psFilename);
 }
 
 bool ColorShader::Render(ID3D11DeviceContext* deviceContext, int indexCount, DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix,
@@ -196,38 +169,6 @@ bool ColorShader::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFil
 	return true;
 }
 
-void ColorShader::ShutdownShader()
-{
-	// Release the matrix constant buffer.
-	if (_matrixBuffer)
-	{
-		_matrixBuffer->Release();
-		_matrixBuffer = nullptr;
-	}
-
-	// Release the layout.
-	if (_layout)
-	{
-		_layout->Release();
-		_layout = nullptr;
-	}
-
-	// Release the pixel shader.
-	if (_pixelShader)
-	{
-		_pixelShader->Release();
-		_pixelShader = nullptr;
-	}
-
-	// Release the vertex shader.
-	if (_vertexShader)
-	{
-		_vertexShader->Release();
-		_vertexShader = nullptr;
-	}
-
-	return;
-}
 
 void ColorShader::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, WCHAR* shaderFilename)
 {
@@ -276,7 +217,7 @@ bool ColorShader::SetShaderParameters(ID3D11DeviceContext* deviceContext, Direct
 	projectionMatrix = DirectX::XMMatrixTranspose(projectionMatrix);
 
 	// Lock the constant buffer so it can be written to.
-	result = deviceContext->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	result = deviceContext->Map(_matrixBuffer.get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
 	{
 		return false;
@@ -291,7 +232,7 @@ bool ColorShader::SetShaderParameters(ID3D11DeviceContext* deviceContext, Direct
 	dataPtr->projection = projectionMatrix;
 
 	// Unlock the constant buffer.
-	deviceContext->Unmap(_matrixBuffer, 0);
+	deviceContext->Unmap(_matrixBuffer.get(), 0);
 
 	// Set the position of the constant buffer in the vertex shader.
 	bufferNumber = 0;
@@ -305,11 +246,11 @@ bool ColorShader::SetShaderParameters(ID3D11DeviceContext* deviceContext, Direct
 void ColorShader::RenderShader(ID3D11DeviceContext* deviceContext, int indexCount)
 {
 	// Set the vertex input layout.
-	deviceContext->IASetInputLayout(_layout);
+	deviceContext->IASetInputLayout(_layout.get());
 
 	// Set the vertex and pixel shaders that will be used to render this triangle.
-	deviceContext->VSSetShader(_vertexShader, nullptr, 0);
-	deviceContext->PSSetShader(_pixelShader, nullptr, 0);
+	deviceContext->VSSetShader(_vertexShader.get(), nullptr, 0);
+	deviceContext->PSSetShader(_pixelShader.get(), nullptr, 0);
 
 	// Render the triangle.
 	deviceContext->DrawIndexed(indexCount, 0, 0);

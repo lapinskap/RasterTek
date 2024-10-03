@@ -2,15 +2,13 @@
 
 #include <d3d11.h>
 #include <directxmath.h>
+#include "ReleasePtr.h"
 
 class Model
 {
 public:
-	Model();
-	~Model();
+	Model(ID3D11Device* device);
 
-	bool Initialize(ID3D11Device* device);
-	void Shutdown();
 	void Render(ID3D11DeviceContext* deviceContext);
 
 	int GetIndexCount();
@@ -22,13 +20,11 @@ private:
 		DirectX::XMFLOAT4 color;
 	};
 
-	bool InitializeBuffers(ID3D11Device* device);
-	void ShutdownBuffers();
+	void InitializeBuffers(ID3D11Device* device);
 	void RenderBuffers(ID3D11DeviceContext* deviceContext);
 
-	ID3D11Buffer* _vertexBuffer = nullptr;
-	ID3D11Buffer* _indexBuffer = nullptr;
+	ReleasePtr<ID3D11Buffer> _vertexBuffer;
+	ReleasePtr<ID3D11Buffer> _indexBuffer;
 	int _vertexCount = 0;
 	int _indexCount = 0;
-
 };

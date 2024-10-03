@@ -11,24 +11,11 @@ Application::Application(uint screenWidth, uint screenHeight, HWND hwnd)
 	_camera->SetPosition(0.0f, 0.0f, -5.0f);
 
 	// Create and initialize the model object.
-	_model = new Model;
-
-	bool result = _model->Initialize(_direct3D.GetDevice());
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
-		return;
-	}
+	_model = new Model(_direct3D.GetDevice());
 
 	// Create and initialize the color shader object.
-	_colorShader = new ColorShader;
+	_colorShader = new ColorShader(_direct3D.GetDevice(), hwnd);
 
-	result = _colorShader->Initialize(_direct3D.GetDevice(), hwnd);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the color shader object.", L"Error", MB_OK);
-		return;
-	}
 }
 
 Application::~Application()
@@ -36,7 +23,6 @@ Application::~Application()
 	// Release the color shader object.
 	if (_colorShader)
 	{
-		_colorShader->Shutdown();
 		delete _colorShader;
 		_colorShader = nullptr;
 	}
@@ -44,7 +30,6 @@ Application::~Application()
 	// Release the model object.
 	if (_model)
 	{
-		_model->Shutdown();
 		delete _model;
 		_model = nullptr;
 	}
