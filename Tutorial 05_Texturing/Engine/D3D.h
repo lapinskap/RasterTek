@@ -4,8 +4,10 @@
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 
+#pragma warning(push, 0)
 #include <d3d11.h>
 #include <directxmath.h>
+#pragma warning(pop)
 
 #include "Common.h"
 #include "ReleasePtr.h"

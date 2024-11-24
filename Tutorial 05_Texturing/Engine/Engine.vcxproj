@@ -50,6 +50,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -64,6 +65,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -81,8 +83,8 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="ReleasePtr.h" />
     <ClInclude Include="System.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureShader.h" />
-
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
@@ -94,6 +96,7 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Model.h" />
     <ClCompile Include="System.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureShader.cpp" />
   </ItemGroup>
   <ItemGroup>

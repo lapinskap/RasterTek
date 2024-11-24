@@ -1,6 +1,14 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include "TextureShader.h"
 #include "Common.h"
 #include "D3D.h"
+
+struct MatrixBufferType
+{
+	DirectX::XMMATRIX world;
+	DirectX::XMMATRIX view;
+	DirectX::XMMATRIX projection;
+};
 
 TextureShader::TextureShader(ID3D11Device* device, HWND hwnd)
 {
@@ -172,6 +180,8 @@ bool TextureShader::SetShaderParameters(ID3D11DeviceContext* deviceContext, Dire
 
 	// Set shader texture resource in the pixel shader.
 	deviceContext->PSSetShaderResources(bufferNumber, 1, &texture);
+
+	return true;
 }
 
 void TextureShader::RenderShader(ID3D11DeviceContext* deviceContext, uint indexCount)

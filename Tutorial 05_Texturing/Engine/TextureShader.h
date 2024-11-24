@@ -4,6 +4,7 @@
 #include <d3dcompiler.h>
 #include <directxmath.h>
 
+#include "Common.h"
 #include "ReleasePtr.h"
 
 class TextureShader
@@ -15,13 +16,7 @@ public:
 		DirectX::XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture);
 
 private:
-	struct MatrixBufferType
-	{
-		DirectX::XMMATRIX world;
-		DirectX::XMMATRIX view;
-		DirectX::XMMATRIX projection;
-	};
-
+	
 	void InitializeShader(ID3D11Device* device, HWND hwnd, const char* vsFilename, const char* psFilename);
 
 	bool SetShaderParameters(ID3D11DeviceContext* deviceContext, DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix,

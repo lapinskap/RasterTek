@@ -41,6 +41,11 @@ struct ReleasePtr
 		return _ptr;
 	}
 
+	const T* get() const
+	{
+		return _ptr;
+	}
+
 	T** operator&()
 	{
 		return &_ptr;

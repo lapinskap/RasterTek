@@ -2,9 +2,16 @@
 #include "D3D.h"
 #include "Common.h"
 
-Model::Model(ID3D11Device* device)
+struct VertexType
 {
-	InitializeBuffers(device);
+	DirectX::XMFLOAT3 position;
+	DirectX::XMFLOAT2 texture;
+};
+
+Model::Model(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const char* textureFilename)
+{
+	InitializeBuffers(device, deviceContext, textureFilename);
+	LoadTexture(device, deviceContext, textureFilename);
 }
 
 void Model::Render(ID3D11DeviceContext* deviceContext)
@@ -18,15 +25,15 @@ int Model::GetIndexCount()
 	return _indexCount;
 }
 
-void Model::InitializeBuffers(ID3D11Device* device)
+void Model::InitializeBuffers(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const char* textureFilename)
 {
 	HRESULT result;
 
 	// Set the number of vertices in the vertex array.
-	_vertexCount = 3;
+	_vertexCount = 4;
 
 	// Set the number of indices in the index array.
-	_indexCount = 3;
+	_indexCount = 6;
 
 	// Create the vertex array.
 	std::vector<VertexType> vertices(_vertexCount);
@@ -35,19 +42,25 @@ void Model::InitializeBuffers(ID3D11Device* device)
 	std::vector<uint> indices(_indexCount);
 
 	// Load the vertex array with data.
-	vertices[0].position = DirectX::XMFLOAT3(-1.0f, -1.0f, 0.0f);  // Bottom left.
-	vertices[0].color = DirectX::XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+	vertices[0].position = DirectX::XMFLOAT3(-1.0f, -1.0f, 0.0f);  // Bottom left
+	vertices[0].texture = DirectX::XMFLOAT2(0.0f, 0.0f);
 
-	vertices[1].position = DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f);  // Top middle.
-	vertices[1].color = DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+	vertices[1].position = DirectX::XMFLOAT3(-1.0f, 1.0f, 0.0f);  // Top left
+	vertices[1].texture = DirectX::XMFLOAT2(0.0f, 1.0f);
 
-	vertices[2].position = DirectX::XMFLOAT3(1.0f, -1.0f, 0.0f);  // Bottom right.
-	vertices[2].color = DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+	vertices[2].position = DirectX::XMFLOAT3(1.0f, -1.0f, 0.0f);  // Bottom right
+	vertices[2].texture = DirectX::XMFLOAT2(1.0f, 0.0f);
+
+	vertices[3].position = DirectX::XMFLOAT3(1.0f, 1.0f, 0.0f); // Top right
+	vertices[3].texture = DirectX::XMFLOAT2(1.0f, 1.0f);
 
 	// Load the index array with data.
 	indices[0] = 0;  // Bottom left.
-	indices[1] = 1;  // Top middle.
+	indices[1] = 1;  // Top left.
 	indices[2] = 2;  // Bottom right.
+	indices[3] = 1;  // Top left.
+	indices[4] = 3;  // Top right.
+	indices[5] = 2;  // Bottom right.
 
 	// Set up the description of the static vertex buffer.
 	D3D11_BUFFER_DESC vertexBufferDesc;
@@ -88,6 +101,19 @@ void Model::InitializeBuffers(ID3D11Device* device)
 	result = device->CreateBuffer(&indexBufferDesc, &indexData, &_indexBuffer);
 	if (FAILED(result))
 		throw D3DError("Failed to create an index buffer");
+}
+
+ID3D11ShaderResourceView* Model::GetTexture()
+{
+	return _texture->GetTexture();
+}
+
+bool Model::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const char* filename)
+{
+	// Create and initialize the texture object.
+	_texture = std::make_unique<Texture>(device, deviceContext, filename);
+
+	return _texture->IsValid();
 }
 
 void Model::RenderBuffers(ID3D11DeviceContext* deviceContext)
