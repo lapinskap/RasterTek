@@ -1,8 +1,10 @@
-# RasterTek
+# RasterTek 2024
 
 <p align="center"><img src="res/Tutorial 49.png"></p>
 
 ## About
+
+Forked RasterTek repo to be modified and renewed to match current C++ standards
 
 The source code of [RasterTek](http://www.rastertek.com/tutdx11.html)'s DirectX 11 tutorials (made ready to use in Visual Studio 2017). Documentation and further explanation can be found at [RasterTek](http://www.rastertek.com/tutdx11.html).
 
